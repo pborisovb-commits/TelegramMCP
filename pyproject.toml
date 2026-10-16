@@ -1,0 +1,18 @@
+[project]
+name = "tg-mcp"
+version = "0.1.0"
+description = "An MCP server that acts as a Telegram client via official TDLib (tdjson + ctypes)."
+requires-python = ">=3.10"
+dependencies = [
+    "mcp>=1.2.0",
+]
+
+[project.scripts]
+tg-mcp = "tg_mcp.server:main"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -1,0 +1,17 @@
+# Secrets & session (NEVER commit — contains auth to your Telegram account)
+.env
+td_data/
+*.session
+
+# Vendored native lib is large; rebuild via scripts/build_tdlib.sh.
+# Uncomment the next line if you prefer to commit it for faster startup.
+lib/libtdjson.so
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
