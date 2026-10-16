@@ -64,6 +64,7 @@ class TelegramClient:
         self._events: dict[str, threading.Event] = {}
 
         self._auth_state: Optional[str] = None
+        self._last_code_info: dict[str, Any] = {}
         self._auth_ready = threading.Event()
         self._auth_error: Optional[Exception] = None
         self._closed = threading.Event()
@@ -72,6 +73,8 @@ class TelegramClient:
         self._phone_provider: Optional[PhoneProvider] = None
         self._code_provider: Optional[CodeProvider] = None
         self._password_provider: Optional[PasswordProvider] = None
+        self._qr_provider: Optional[Callable[[str], None]] = None
+        self._qr_requested = False
 
         self._recv_thread: Optional[threading.Thread] = None
 
@@ -105,6 +108,7 @@ class TelegramClient:
         code_provider: CodeProvider,
         password_provider: Optional[PasswordProvider] = None,
         *,
+        qr_provider: Optional[Callable[[str], None]] = None,
         timeout: float = 300.0,
     ) -> None:
         """Run the interactive login, blocking until authorized.
@@ -116,6 +120,7 @@ class TelegramClient:
         self._phone_provider = phone_provider
         self._code_provider = code_provider
         self._password_provider = password_provider
+        self._qr_provider = qr_provider
         if self._recv_thread is None:
             self.start()
         self.wait_until_ready(timeout=timeout)
@@ -184,6 +189,17 @@ class TelegramClient:
                 if waiter is not None:
                     waiter.set()
                     continue
+            # Surface unsolicited errors (e.g. a failed resend/checkCode whose
+            # response carries no @extra) instead of silently dropping them.
+            if event.get("@type") == "error":
+                import sys
+                print(
+                    f">>> TDLib error: code={event.get('code')} "
+                    f"message={event.get('message')!r}",
+                    file=sys.stderr,
+                    flush=True,
+                )
+                continue
             self._handle_update(event)
 
     def _handle_update(self, update: dict[str, Any]) -> None:
@@ -217,6 +233,15 @@ class TelegramClient:
                     "application_version": "0.1.0",
                 }
             )
+        elif kind in ("authorizationStateWaitPhoneNumber", "authorizationStateWaitCode") and (
+            self._qr_provider is not None and not self._qr_requested
+        ):
+            # QR login: confirm from an already logged-in device instead of a code.
+            self._qr_requested = True
+            self._send_raw({"@type": "requestQrCodeAuthentication", "other_user_ids": []})
+        elif kind == "authorizationStateWaitOtherDeviceConfirmation":
+            if self._qr_provider is not None:
+                self._qr_provider(state.get("link", ""))
         elif kind == "authorizationStateWaitPhoneNumber":
             if self._phone_provider is None:
                 raise RuntimeError(
@@ -230,7 +255,11 @@ class TelegramClient:
         elif kind == "authorizationStateWaitCode":
             if self._code_provider is None:
                 raise RuntimeError("Login code required but no code provider was set.")
+            self._last_code_info = state.get("code_info") or {}
             code = self._code_provider()
+            if code == "__resend__":
+                self._send_raw({"@type": "resendAuthenticationCode"})
+                return
             self._send_raw({"@type": "checkAuthenticationCode", "code": code})
         elif kind == "authorizationStateWaitPassword":
             if self._password_provider is None:

@@ -27,10 +27,50 @@ def main() -> int:
     cfg = Config.from_env()
     client = TelegramClient(cfg.api_id, cfg.api_hash, database_directory=cfg.database_dir)
     print("Connecting to Telegram (TDLib)...")
+
+    _channel = {
+        "authenticationCodeTypeTelegramMessage": "a message in the Telegram app "
+        "(service chat 'Telegram' on a device where you are already logged in)",
+        "authenticationCodeTypeSms": "SMS",
+        "authenticationCodeTypeCall": "a phone call",
+        "authenticationCodeTypeFlashCall": "a flash phone call (caller ID is the code)",
+        "authenticationCodeTypeMissedCall": "a missed call (last digits of the number are the code)",
+        "authenticationCodeTypeFragment": "the Fragment platform (fragment.com)",
+    }
+
+    def code_provider() -> str:
+        info = client._last_code_info or {}
+        ctype = (info.get("type") or {}).get("@type", "")
+        where = _channel.get(ctype, ctype or "an unknown channel")
+        length = (info.get("type") or {}).get("length")
+        print(f"\n>>> Telegram says it sent the code via: {where}"
+              + (f" ({length} digits)" if length else ""))
+        nxt = info.get("next_type")
+        if nxt:
+            nxt_where = _channel.get(nxt.get("@type", ""), "another channel")
+            print(f">>> If it doesn't arrive, type 'resend' to resend via {nxt_where}.")
+        return input("Login code (or 'resend'): ").strip()
+
+    def qr_provider(link: str) -> None:
+        print("\n>>> On your phone: Telegram -> Settings -> Devices -> Link Desktop Device,")
+        print(">>> then scan this QR code (it refreshes every ~30s; a new one will print):\n")
+        try:
+            import qrcode
+
+            qr = qrcode.QRCode(border=1)
+            qr.add_data(link)
+            qr.print_ascii(invert=True)
+        except ImportError:
+            print("(pip install qrcode to see the QR here; or turn this link into a QR:)")
+        print(f"\n{link}\n")
+
     try:
         client.login(
+            qr_provider=qr_provider if "--qr" in sys.argv else None,
             phone_provider=lambda: input("Phone number (international, e.g. +1234...): ").strip(),
-            code_provider=lambda: input("Login code (from Telegram): ").strip(),
+            code_provider=lambda: "__resend__"
+            if (c := code_provider()).lower() in ("resend", "r")
+            else c,
             password_provider=lambda: getpass.getpass("2FA password: "),
             timeout=600.0,
         )
