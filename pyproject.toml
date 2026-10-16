@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "An MCP server that acts as a Telegram client via official TDLib (tdjson + ctypes)."
 requires-python = ">=3.10"
 dependencies = [
-    "mcp>=1.2.0",
+    "mcp>=2.0.0",
 ]
 
 [project.scripts]

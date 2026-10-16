@@ -1,6 +1,7 @@
 """MCP server exposing Telegram client operations as tools.
 
-Built on the official MCP Python SDK (FastMCP). The server talks to Telegram
+Built on the official MCP Python SDK (MCPServer, formerly FastMCP in SDK v1).
+The server talks to Telegram
 through a single already-authorized TDLib session; run ``scripts/login.py`` once
 before starting the server to create that session.
 
@@ -12,13 +13,13 @@ from __future__ import annotations
 
 from typing import Any
 
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 
 from . import api
 from .client import TelegramClient
 from .config import Config
 
-mcp = FastMCP("telegram")
+mcp = MCPServer("telegram")
 
 _client: TelegramClient | None = None
 
