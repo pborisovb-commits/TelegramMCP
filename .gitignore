@@ -3,9 +3,9 @@
 td_data/
 *.session
 
-# Vendored native lib is large; rebuild via scripts/build_tdlib.sh.
-# Uncomment the next line if you prefer to commit it for faster startup.
-lib/libtdjson.so
+# Vendored native lib (libtdjson.so) IS committed for fast startup across
+# ephemeral sessions. It was built for Ubuntu 24.04 x86-64 (TDLib 1.8.68).
+# On a different OS/arch, rebuild with scripts/build_tdlib.sh.
 
 # Python
 __pycache__/

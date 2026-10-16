@@ -79,19 +79,9 @@ class TdJson:
         self._td_execute.restype = ctypes.c_char_p
         self._td_execute.argtypes = [ctypes.c_char_p]
 
-        # Silence TDLib's noisy stderr logging by default (0 = fatal only).
-        self._set_log_callback_type = ctypes.CFUNCTYPE(
-            None, ctypes.c_int, ctypes.c_char_p
-        )
-        try:
-            set_cb = self._tdjson.td_set_log_message_callback
-            set_cb.restype = None
-            set_cb.argtypes = [ctypes.c_int, self._set_log_callback_type]
-            # Keep a reference so the callback is not garbage-collected.
-            self._log_cb = self._set_log_callback_type(lambda level, msg: None)
-            set_cb(1, self._log_cb)
-        except AttributeError:
-            pass
+        # Quiet TDLib's noisy stderr logging (default verbosity is 5).
+        # 1 = errors only; this is the officially documented static method.
+        self.execute({"@type": "setLogVerbosityLevel", "new_verbosity_level": 1})
 
     @property
     def library_path(self) -> str:
