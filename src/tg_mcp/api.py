@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from typing import Any, Optional
 
-from .client import TelegramClient
+from .client import TelegramClient, TdlibError
 
 
 def get_me(client: TelegramClient) -> dict[str, Any]:
@@ -20,23 +20,55 @@ def get_me(client: TelegramClient) -> dict[str, Any]:
     return _user_summary(user)
 
 
-def list_chats(client: TelegramClient, limit: int = 30) -> list[dict[str, Any]]:
-    """Return the main chat list, most recent first."""
-    main_list = {"@type": "chatListMain"}
-    # Ask TDLib to load chats into memory; ignore the "no more chats" (404) error.
-    try:
-        client.invoke({"@type": "loadChats", "chat_list": main_list, "limit": limit})
-    except Exception:
-        pass
-    result = client.invoke({"@type": "getChats", "chat_list": main_list, "limit": limit})
-    chats: list[dict[str, Any]] = []
-    for chat_id in result.get("chat_ids", []):
+def _folder_title(value: Any) -> str:
+    while isinstance(value, dict):
+        value = value.get("text", "")
+    return value if isinstance(value, str) else ""
+
+
+def list_chat_folders(client: TelegramClient) -> dict[str, Any]:
+    """Return user-created sidebar folders in Telegram order."""
+    snapshot = client.get_chat_folders()
+    return {
+        "folders": [
+            {"id": f["id"], "title": _folder_title(f.get("name", f.get("title", ""))),
+             "icon": (f.get("icon") or {}).get("name"),
+             "color_id": f.get("color_id")}
+            for f in snapshot.get("chat_folders", [])
+        ],
+        "main_chat_list_position": snapshot.get("main_chat_list_position", 0),
+    }
+
+
+def list_chats(client: TelegramClient, limit: int = 30,
+               folder_id: Optional[int] = None, offset: int = 0,
+               archived: bool = False) -> list[dict[str, Any]]:
+    """Read a page of a main, archive or actual TDLib folder chat list."""
+    if not 1 <= limit <= 1000 or offset < 0 or offset + limit > 10000:
+        raise ValueError("Require limit 1..1000, offset >= 0, offset+limit <= 10000")
+    if folder_id is not None and archived:
+        raise ValueError("Choose folder_id or archived, not both")
+    if folder_id is not None:
+        if folder_id not in {f["id"] for f in list_chat_folders(client)["folders"]}:
+            raise ValueError(f"Unknown folder_id: {folder_id}; call list_chat_folders")
+        chat_list = {"@type": "chatListFolder", "chat_folder_id": folder_id}
+    else:
+        chat_list = {"@type": "chatListArchive" if archived else "chatListMain"}
+    target = offset + limit
+    exhausted = False
+    for _ in range(100):
+        result = client.invoke({"@type": "getChats", "chat_list": chat_list, "limit": target})
+        ids = result.get("chat_ids", [])
+        if len(ids) >= target or exhausted:
+            return [_chat_summary(client.invoke({"@type": "getChat", "chat_id": cid}))
+                    for cid in ids[offset:target]]
         try:
-            chat = client.invoke({"@type": "getChat", "chat_id": chat_id})
-        except Exception:
-            continue
-        chats.append(_chat_summary(chat))
-    return chats
+            client.invoke({"@type": "loadChats", "chat_list": chat_list, "limit": target})
+        except TdlibError as exc:
+            if exc.code != 404:
+                raise
+            exhausted = True
+    raise TimeoutError("Chat list is still loading; retry instead of using an incomplete list")
 
 
 def get_chat_history(

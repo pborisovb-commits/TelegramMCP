@@ -18,6 +18,7 @@ for the one-time interactive login.
 from __future__ import annotations
 
 import threading
+import copy
 import uuid
 from typing import Any, Callable, Optional
 
@@ -68,6 +69,8 @@ class TelegramClient:
         self._auth_ready = threading.Event()
         self._auth_error: Optional[Exception] = None
         self._closed = threading.Event()
+        self._folders_ready = threading.Event()
+        self._folders_update: dict[str, Any] = {}
 
         # Interactive auth providers; set via login().
         self._phone_provider: Optional[PhoneProvider] = None
@@ -203,6 +206,10 @@ class TelegramClient:
             self._handle_update(event)
 
     def _handle_update(self, update: dict[str, Any]) -> None:
+        if update.get("@type") == "updateChatFolders":
+            with self._lock:
+                self._folders_update = copy.deepcopy(update)
+            self._folders_ready.set()
         if update.get("@type") == "updateAuthorizationState":
             state = update.get("authorization_state", {})
             try:
@@ -210,6 +217,13 @@ class TelegramClient:
             except Exception as exc:  # surface auth failures to waiters
                 self._auth_error = exc
                 self._auth_ready.set()
+
+    def get_chat_folders(self, timeout: float = 30.0) -> dict[str, Any]:
+        """Wait for TDLib's initial folder snapshot; retain subsequent updates."""
+        if not self._folders_ready.wait(timeout):
+            raise TimeoutError("TDLib has not supplied the chat folder list yet; retry.")
+        with self._lock:
+            return copy.deepcopy(self._folders_update)
 
     def _on_auth_state(self, state: dict[str, Any]) -> None:
         kind = state.get("@type")

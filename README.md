@@ -78,6 +78,29 @@ Register it with an MCP client (e.g. Claude Desktop `mcpServers` config):
 }
 ```
 
+## Chat folders
+
+- `list_chat_folders()` returns sidebar folders with IDs, titles, icons and their
+  Telegram order, plus the position of the main chat list.
+- `list_chats(folder_id=3, limit=100, offset=0)` reads an actual folder. Obtain IDs
+  from `list_chat_folders`; do not infer them from names or chat types.
+- `list_chats(archived=True)` reads the archive. Without selectors the existing
+  main-list behavior is preserved. Folder and archive selectors are exclusive.
+- `limit` is 1..1000, `offset` is nonnegative, and their sum is at most 10000.
+  A short page means exhaustion. Pagination is not a stable snapshot if chats
+  move while reading. One chat can belong to multiple folders.
+- Folder changes are received through TDLib's `updateChatFolders`. Membership,
+  automatic filters and pinned ordering are handled by TDLib, not reconstructed
+  from explicitly included chat IDs. Failed loads are not returned as empty lists.
+
+Local Windows launch: `login-local.ps1` uses QR authentication; `start-mcp.ps1`
+starts the Docker-backed stdio server. Rebuild with
+`docker build -f Dockerfile.local -t mcptg-local:0.1 .` after source changes and
+reconnect the MCP client. Only one active TDLib process may own `td_data`.
+
+Tests: `python -m unittest discover -s scripts -p "test_*.py"` after installing
+the project in editable mode.
+
 ## Security notes
 
 - `td_data/` and `.env` are **credentials to your Telegram account** — never commit

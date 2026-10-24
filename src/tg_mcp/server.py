@@ -14,6 +14,7 @@ from __future__ import annotations
 from typing import Any
 
 from mcp.server.mcpserver import MCPServer
+from mcp.server.mcpserver.exceptions import ToolError
 
 from . import api
 from .client import TelegramClient
@@ -46,13 +47,31 @@ def whoami() -> dict[str, Any]:
 
 
 @mcp.tool()
-def list_chats(limit: int = 30) -> list[dict[str, Any]]:
-    """List the user's most recent chats (dialogs), newest first.
+def list_chat_folders() -> dict[str, Any]:
+    """List Telegram sidebar folders (e.g. Monkey, bots), their IDs and order.
 
-    Returns chat id, title, type, unread count, and a summary of the last message.
-    Use the returned id with read_chat or send_message.
+    These are user-created chat folders, not group conversations.
+    Use a returned id as folder_id in list_chats to get its actual members.
     """
-    return api.list_chats(_get_client(), limit=limit)
+    return api.list_chat_folders(_get_client())
+
+
+@mcp.tool()
+def list_chats(limit: int = 30, folder_id: int | None = None,
+               offset: int = 0, archived: bool = False) -> list[dict[str, Any]]:
+    """List chats in Telegram order, including pinned chats first.
+
+    Default: main list. For a sidebar folder first call list_chat_folders,
+    then pass its folder_id. archived=True selects archive, mutually exclusive
+    with folder_id. limit: 1..1000; offset: skip chats for pagination (not a
+    stable snapshot if chats move). A short page means the list is exhausted.
+    Returns chat ID, title, type, unread count and last message.
+    """
+    try:
+        return api.list_chats(_get_client(), limit=limit, folder_id=folder_id,
+                              offset=offset, archived=archived)
+    except (ValueError, TimeoutError) as exc:
+        raise ToolError(str(exc)) from exc
 
 
 @mcp.tool()

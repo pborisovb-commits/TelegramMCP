@@ -1,0 +1,5 @@
+.git
+.env
+td_data
+.venv
+__pycache__
