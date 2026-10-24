@@ -1,5 +1,7 @@
 # TelegramMCP
 
+**Русский** | [English](README.en.md)
+
 **Ваш Telegram в ИИ-ассистенте: чаты, папки, сообщения и поиск.**
 
 Автор: **[pborisovb](https://github.com/pborisovb-commits)** · [Лицензия MIT](LICENSE)
