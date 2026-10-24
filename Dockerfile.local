@@ -4,10 +4,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends python3 python3
 WORKDIR /app
 RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
-COPY pyproject.toml README.md ./
+COPY pyproject.toml README.md LICENSE ./
 COPY src ./src
 COPY scripts ./scripts
 COPY lib ./lib
-RUN pip install --no-cache-dir . qrcode
+COPY THIRD_PARTY_NOTICES.md ./
+COPY licenses ./licenses
+RUN pip install --no-cache-dir . qrcode==8.2
 ENV TG_DATABASE_DIR=/data TDJSON_PATH=/app/lib/libtdjson.so
 CMD ["python", "-m", "tg_mcp.server"]

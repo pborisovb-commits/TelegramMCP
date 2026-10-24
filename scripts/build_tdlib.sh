@@ -10,11 +10,12 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 WORK="${TDLIB_BUILD_DIR:-/tmp/tdlib-build}"
 
-echo ">> Installing build dependencies (needs sudo/root)..."
-if command -v apt-get >/dev/null 2>&1; then
-    apt-get update -qq || true
-    apt-get install -y -qq g++ cmake gperf libssl-dev zlib1g-dev git || true
-fi
+for tool in git cmake g++ gperf; do
+    command -v "$tool" >/dev/null 2>&1 || {
+        echo "Missing $tool. On Ubuntu install: sudo apt-get install g++ cmake gperf libssl-dev zlib1g-dev git"
+        exit 1
+    }
+done
 
 mkdir -p "$WORK"
 if [ ! -d "$WORK/td" ]; then

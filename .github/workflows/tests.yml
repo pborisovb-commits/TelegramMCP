@@ -1,0 +1,13 @@
+name: Tests
+on: [push, pull_request]
+jobs:
+  unit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -e .
+      - run: python -m unittest discover -s scripts -p "test_*.py"
+      - run: python -c "from tg_mcp.server import mcp; from tg_mcp.tdjson import TdJson; assert TdJson().execute({'@type':'getOption','name':'version'})['value'] == '1.8.68'"

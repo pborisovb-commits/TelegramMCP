@@ -15,3 +15,13 @@ venv/
 *.egg-info/
 build/
 dist/
+
+# Local overrides, logs and database copies
+.env.*
+!.env.example
+*.log
+*.binlog
+*.sqlite*
+*.db
+*.backup
+.mcp.json

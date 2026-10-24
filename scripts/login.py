@@ -5,8 +5,8 @@ Run this once from a terminal:
 
     TG_API_ID=... TG_API_HASH=... python scripts/login.py
 
-It will prompt for your phone number, the login code Telegram sends you, and
-(if you have two-step verification enabled) your password. On success it writes
+QR login is the default; --phone enables phone/code login. It may prompt for
+your password if two-step verification is enabled. On success it writes
 the session into the database directory (default ./td_data). After that the MCP
 server starts up already authorized and never prompts again.
 """
@@ -66,7 +66,7 @@ def main() -> int:
 
     try:
         client.login(
-            qr_provider=qr_provider if "--qr" in sys.argv else None,
+            qr_provider=None if "--phone" in sys.argv else qr_provider,
             phone_provider=lambda: input("Phone number (international, e.g. +1234...): ").strip(),
             code_provider=lambda: "__resend__"
             if (c := code_provider()).lower() in ("resend", "r")

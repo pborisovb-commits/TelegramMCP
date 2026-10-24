@@ -1,11 +1,18 @@
 [project]
 name = "tg-mcp"
-version = "0.1.0"
+version = "0.2.0"
+authors = [{ name = "pborisovb" }]
+readme = "README.md"
+license = { file = "LICENSE" }
 description = "An MCP server that acts as a Telegram client via official TDLib (tdjson + ctypes)."
 requires-python = ">=3.10"
 dependencies = [
-    "mcp>=2.0.0",
+    "mcp==2.3.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/pborisovb-commits/TelegramMCP"
+Issues = "https://github.com/pborisovb-commits/TelegramMCP/issues"
 
 [project.scripts]
 tg-mcp = "tg_mcp.server:main"

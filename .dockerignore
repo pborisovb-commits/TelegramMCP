@@ -3,3 +3,9 @@
 td_data
 .venv
 __pycache__
+
+.env.*
+*.log
+*.binlog
+*.sqlite*
+*.db
