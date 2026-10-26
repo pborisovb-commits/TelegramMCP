@@ -1,10 +1,10 @@
 # TelegramMCP
 
-**Русский** | [English](README.md)
+**Русский** | [English](../README.md)
 
 **Ваш Telegram в ИИ-ассистенте: чаты, папки, сообщения и поиск.**
 
-Автор: **[pborisovb](https://github.com/pborisovb-commits)** · [Лицензия MIT](LICENSE)
+Автор: **[pborisovb](https://github.com/pborisovb-commits)** · [Лицензия MIT](../LICENSE)
 
 TelegramMCP соединяет ваш личный аккаунт Telegram с приложением, которое умеет
 работать с MCP, например Codex. MCP — это способ дать ассистенту инструменты:
@@ -207,7 +207,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\setup.ps1
 | Сообщения загрузились не полностью | Повторите запрос; чтение истории сейчас ограничено последними сообщениями |
 | Переехала папка проекта | Обновите абсолютный путь в настройке MCP |
 
-Не публикуйте логи с личной перепиской или реквизитами. Подробнее: [SECURITY.md](SECURITY.md).
+Не публикуйте логи с личной перепиской или реквизитами. Подробнее: [SECURITY.md](../.github/SECURITY.md).
 Чтобы отключить доступ к аккаунту, завершите сессию **tg-mcp** в разделе
 **Telegram → Настройки → Устройства**. В Codex удалить регистрацию можно командой
 `codex mcp remove telegram`.
@@ -268,7 +268,7 @@ Telegram; `server.py` — инструменты MCP; `tdjson.py` — привя
 
 ## Автор и лицензии
 
-Автор проекта — **pborisovb**. Код TelegramMCP распространяется по [MIT](LICENSE).
+Автор проекта — **pborisovb**. Код TelegramMCP распространяется по [MIT](../LICENSE).
 Сторонние зависимости сохраняют свои лицензии: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ## План развития и обратная связь

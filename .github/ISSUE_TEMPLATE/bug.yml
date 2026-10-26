@@ -4,7 +4,7 @@ title: "[bug] "
 body:
   - type: markdown
     attributes:
-      value: "Do not post API credentials, passwords, session files, private messages or full unredacted logs. Не публикуйте ключи, пароли, файлы сессии и личную переписку. Report vulnerabilities privately as described in SECURITY.md."
+      value: "Do not post API credentials, passwords, session files, private messages or full unredacted logs. Не публикуйте ключи, пароли, файлы сессии и личную переписку. Report vulnerabilities privately as described at https://github.com/pborisovb-commits/TelegramMCP/security/policy."
   - type: textarea
     id: environment
     attributes:

@@ -1,6 +1,6 @@
 # TelegramMCP
 
-[Русский](README.ru.md) | **English**
+[Русский](docs/README.ru.md) | **English**
 
 **Your Telegram account in an AI assistant: chats, folders, messages, and search.**
 
@@ -211,7 +211,7 @@ and protect the backup like a password. Do not add it to Git.
 | Project directory moved | Update the absolute path in your MCP configuration |
 
 Do not publish logs containing private conversations or credentials.
-See [SECURITY.en.md](SECURITY.en.md). To revoke account access, terminate the
+See [SECURITY.en.md](docs/SECURITY.en.md). To revoke account access, terminate the
 **tg-mcp** session in **Telegram → Settings → Devices**.
 To remove the server registration from Codex, run `codex mcp remove telegram`.
 
@@ -271,7 +271,7 @@ The server provides local stdio, not an HTTP endpoint.
 
 ## Roadmap and feedback
 
-See the [roadmap](ROADMAP.md) for priorities and current boundaries. Report an
+See the [roadmap](docs/ROADMAP.md) for priorities and current boundaries. Report an
 [installation problem, bug, or feature request](https://github.com/pborisovb-commits/TelegramMCP/issues/new/choose).
 Do not include Telegram credentials, session files, or private messages in issues.
 
@@ -293,4 +293,4 @@ retrieved content to its model provider.
 
 The project author is **pborisovb**. TelegramMCP is distributed under the
 [MIT License](LICENSE). Third-party dependencies retain their own licenses:
-[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) (in Russian).
+[THIRD_PARTY_NOTICES.md](docs/THIRD_PARTY_NOTICES.md) (in Russian).

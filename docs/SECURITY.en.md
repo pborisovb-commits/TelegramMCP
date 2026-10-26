@@ -1,6 +1,6 @@
 # Security
 
-[Русский](SECURITY.md) | **English**
+[Русский](../.github/SECURITY.md) | **English**
 
 `.env` contains your Telegram application credentials, and `td_data/` grants access
 to your account. Never publish these files, backups of the session folder, login

@@ -8,7 +8,7 @@ COPY pyproject.toml README.md LICENSE ./
 COPY src ./src
 COPY scripts ./scripts
 COPY lib ./lib
-COPY THIRD_PARTY_NOTICES.md ./
+COPY docs/THIRD_PARTY_NOTICES.md ./
 COPY licenses ./licenses
 RUN pip install --no-cache-dir . qrcode==8.2
 ENV TG_DATABASE_DIR=/data TDJSON_PATH=/app/lib/libtdjson.so
