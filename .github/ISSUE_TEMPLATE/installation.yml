@@ -1,0 +1,35 @@
+name: "Installation problem / Ошибка установки"
+description: "Docker, setup, QR login or MCP registration problems."
+title: "[installation] "
+body:
+  - type: markdown
+    attributes:
+      value: "Do not post API credentials, passwords, session files, private messages or full unredacted logs. Не публикуйте ключи, пароли, файлы сессии и личную переписку. Report vulnerabilities privately as described in SECURITY.md."
+  - type: textarea
+    id: environment
+    attributes:
+      label: "Environment / Окружение"
+      description: "OS and architecture, Docker version, AI/MCP client and version."
+    validations:
+      required: true
+  - type: textarea
+    id: step
+    attributes:
+      label: "Failing step / Шаг с ошибкой"
+      description: "Which documented command or setup step fails?"
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: "Sanitized error / Ошибка без секретов"
+      description: "Paste the error after removing credentials, session data and personal information."
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: "Expected result / Ожидание"
+      description: "What did you expect to happen?"
+    validations:
+      required: true

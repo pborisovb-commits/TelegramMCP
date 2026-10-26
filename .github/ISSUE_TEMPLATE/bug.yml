@@ -1,0 +1,35 @@
+name: "Bug report / Ошибка работы"
+description: "An installed server behaves unexpectedly."
+title: "[bug] "
+body:
+  - type: markdown
+    attributes:
+      value: "Do not post API credentials, passwords, session files, private messages or full unredacted logs. Не публикуйте ключи, пароли, файлы сессии и личную переписку. Report vulnerabilities privately as described in SECURITY.md."
+  - type: textarea
+    id: environment
+    attributes:
+      label: "Environment / Окружение"
+      description: "Version or commit, OS, Docker, MCP client. How many clients are connected?"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: "Reproduction / Как повторить"
+      description: "Numbered steps with fictional or redacted chat data."
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: "Expected behavior / Ожидание"
+      description: "What should happen?"
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: "Actual behavior / Что произошло"
+      description: "What happened? Include only sanitized errors."
+    validations:
+      required: true

@@ -1,88 +1,89 @@
 # TelegramMCP
 
-**Русский** | [English](README.en.md)
+[Русский](README.ru.md) | **English**
 
-**Ваш Telegram в ИИ-ассистенте: чаты, папки, сообщения и поиск.**
+**Your Telegram account in an AI assistant: chats, folders, messages, and search.**
 
-Автор: **[pborisovb](https://github.com/pborisovb-commits)** · [Лицензия MIT](LICENSE)
+Author: **[pborisovb](https://github.com/pborisovb-commits)** · [MIT License](LICENSE)
 
-TelegramMCP соединяет ваш личный аккаунт Telegram с приложением, которое умеет
-работать с MCP, например Codex. MCP — это способ дать ассистенту инструменты:
-вместо ручного копирования переписки вы можете попросить его найти чат или прочитать
-последние сообщения. Это не бот: подключается именно ваш аккаунт.
+TelegramMCP connects your personal Telegram account to an MCP-compatible application,
+such as Codex. MCP gives an assistant tools: instead of manually copying a conversation,
+you can ask it to find a chat or read recent messages. This connects your own account;
+it is not a Telegram bot.
 
-Проект использует официальную библиотеку Telegram **TDLib**, без Telethon и Pyrogram.
-TelegramMCP — самостоятельный проект, не официальный продукт Telegram.
+The project uses Telegram's official **TDLib** library, without Telethon or Pyrogram.
+TelegramMCP is an independent project, not an official Telegram product.
 
-## Что можно попросить
+## Things you can ask
 
-- «Покажи мои папки Telegram».
-- «Покажи чаты из папки Работа».
-- «Найди чат по названию».
-- «Прочитай последние 30 сообщений из выбранного чата и кратко перескажи».
-- «Подготовь ответ, покажи мне текст и отправь после моего подтверждения».
+- “Show my Telegram folders.”
+- “Show the chats in my Work folder.”
+- “Find a chat by name.”
+- “Read the last 30 messages in the selected chat and summarize them.”
+- “Draft a reply, show me the text, and send it after I confirm.”
 
-Отправка выполняется от вашего имени. Проверяйте получателя и текст перед разрешением
-на отправку. Правила подтверждения задаются в вашем ИИ-приложении: сам сервер не
-показывает отдельное окно подтверждения.
+Messages are sent from your account. Check the recipient and text before approving
+a send. Approval rules are configured in your AI application; the server itself
+does not display a separate confirmation dialog.
 
-## Быстрый старт: Windows + Docker Desktop
+## Quick start: Windows + Docker Desktop
 
-Это проверенный способ установки. Не нужно отдельно устанавливать Python или
-компиляторы. Готовая библиотека рассчитана на **x86-64 (Intel/AMD)**. Windows ARM и
-Apple Silicon в этой версии не проверены.
+This is the tested installation method. You do not need to install Python or
+compilers separately. The included library targets **x86-64 (Intel/AMD)**.
+Windows ARM and Apple Silicon have not been tested with this version.
 
-Потребуются:
+You will need:
 
-1. Telegram на телефоне с уже выполненным входом.
-2. [Docker Desktop](https://www.docker.com/products/docker-desktop/) с Linux-контейнерами.
-   После установки запустите его и дождитесь готовности движка. Если установщик
-   попросит включить WSL 2 или перезагрузить компьютер, выполните его инструкции.
-3. [Git](https://git-scm.com/downloads), либо скачанный ZIP репозитория.
-4. ИИ-приложение с поддержкой **локального MCP через stdio**. Обычная веб-страница
-   чата не может сама запустить программу на вашем компьютере.
+1. Telegram on your phone, already signed in.
+2. [Docker Desktop](https://www.docker.com/products/docker-desktop/) using Linux containers.
+   Start it after installation and wait for the engine to become ready. If the installer
+   asks you to enable WSL 2 or restart your computer, follow its instructions.
+3. [Git](https://git-scm.com/downloads), or a downloaded ZIP of this repository.
+4. An AI application that supports **local MCP over stdio**. A regular web chat page
+   cannot launch a program on your computer by itself.
 
-### 1. Скачайте проект
+### 1. Download the project
 
-Откройте PowerShell в папке, где хотите хранить проект:
+Open PowerShell in the directory where you want to keep the project:
 
 ```powershell
 git clone https://github.com/pborisovb-commits/TelegramMCP.git
 cd TelegramMCP
 ```
 
-Без Git: на GitHub нажмите **Code → Download ZIP**, распакуйте архив, откройте
-полученную папку в Проводнике и выберите **Открыть в терминале**.
+Without Git: on GitHub, select **Code → Download ZIP**, extract the archive, open
+the extracted folder in File Explorer, and choose **Open in Terminal**.
 
-### 2. Получите два значения от Telegram
+### 2. Get your Telegram application credentials
 
-Откройте [my.telegram.org](https://my.telegram.org), войдите и перейдите в
-**API development tools**. Создайте приложение и сохраните `api_id` и `api_hash`.
-Название и короткое имя приложения можно выбрать самостоятельно.
+Open [my.telegram.org](https://my.telegram.org), sign in, and go to
+**API development tools**. Create an application and save its `api_id` and `api_hash`.
+You can choose the application title and short name yourself.
 
-Это ключи приложения, а не токен BotFather. Вход на my.telegram.org может запросить
-код Telegram; вход в сам TelegramMCP ниже выполняется по QR.
+These are application credentials, not a BotFather token. Signing in to
+my.telegram.org may require a Telegram verification code; signing in to
+TelegramMCP below uses a QR code.
 
-### 3. Подготовьте контейнер
+### 3. Prepare the container
 
-В PowerShell, находясь в папке проекта, выполните:
+In PowerShell, from the project directory, run:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\setup.ps1
 ```
 
-Команда создаст файл `.env`, папку `td_data` и Docker-образ. При первом запуске
-Docker скачивает зависимости, поэтому установка занимает несколько минут.
-Повторный запуск не перезаписывает существующий `.env` или сессию.
-`ExecutionPolicy Bypass` применяется только к этому запуску PowerShell.
+This creates the `.env` file, the `td_data` folder, and a Docker image. The first
+build downloads dependencies and may take several minutes. Running it again does
+not overwrite your existing `.env` or session. `ExecutionPolicy Bypass` applies
+only to this PowerShell invocation.
 
-Откройте настройки:
+Open the configuration file:
 
 ```powershell
 notepad .env
 ```
 
-Замените заглушки своими значениями и сохраните файл:
+Replace the placeholders with your values and save:
 
 ```dotenv
 TG_API_ID=YOUR_API_ID
@@ -90,53 +91,54 @@ TG_API_HASH=YOUR_API_HASH
 TG_DATABASE_DIR=/data
 ```
 
-`TG_API_ID` должен содержать число. `/data` оставьте как есть: Docker связывает
-этот путь с папкой `td_data` рядом с проектом. Не отправляйте `.env` другим людям.
+`TG_API_ID` must be a number. Leave `/data` unchanged: Docker maps this path to the
+`td_data` folder next to the project files. Do not share `.env` with other people.
 
-### 4. Войдите по QR-коду
+### 4. Sign in with a QR code
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\login-local.ps1
 ```
 
-В терминале появится QR-код. На телефоне откройте:
-**Telegram → Настройки → Устройства → Подключить устройство** и отсканируйте его.
-Если QR не помещается, разверните окно терминала или уменьшите размер шрифта.
-Код обновляется автоматически. Если у вас включена двухэтапная защита, терминал
-попросит пароль Telegram; при вводе символы не отображаются — это нормально.
+A QR code appears in the terminal. On your phone, open
+**Telegram → Settings → Devices → Link Desktop Device** and scan it.
+If the QR code does not fit, maximize the terminal or reduce its font size.
+The code refreshes automatically. If two-step verification is enabled, the terminal
+will ask for your Telegram password. Characters are not displayed while you type;
+this is normal.
 
-Дождитесь сообщения **Logged in as …**, затем нажмите Enter. Сессия сохранена:
-сканировать QR при каждом запуске не нужно. Не удаляйте папку `td_data`.
+Wait for **Logged in as …**, then press Enter. Your session is saved, so you do not
+need to scan the QR code every time. Do not delete the `td_data` folder.
 
-### 5. Подключите к Codex
+### 5. Connect to Codex
 
-Если команда `codex` доступна в терминале, выполните из папки проекта:
+If the `codex` command is available in your terminal, run this from the project directory:
 
 ```powershell
 $launcher = (Resolve-Path .\start-mcp.ps1).Path
 codex mcp add telegram -- powershell.exe -NoProfile -ExecutionPolicy Bypass -File $launcher
 ```
 
-Проверьте регистрацию:
+Check that the server is registered:
 
 ```powershell
 codex mcp get telegram
 ```
 
-Перезапустите Codex для загрузки инструментов. Docker Desktop должен оставаться
-запущенным. Напишите: **«Покажи мои папки Telegram»**.
+Restart Codex to load the tools. Keep Docker Desktop running.
+Ask: **“Show my Telegram folders.”**
 
-Если `codex` не найден, используйте настройки MCP вашего приложения:
+If `codex` is not found, use your application's MCP settings:
 
-| Поле | Значение |
+| Field | Value |
 |---|---|
-| Имя | `telegram` |
-| Тип | `stdio` / локальная команда |
-| Команда | `powershell.exe` |
-| Аргументы | `-NoProfile`, `-ExecutionPolicy`, `Bypass`, `-File`, полный путь к `start-mcp.ps1` |
+| Name | `telegram` |
+| Type | `stdio` / local command |
+| Command | `powershell.exe` |
+| Arguments | `-NoProfile`, `-ExecutionPolicy`, `Bypass`, `-File`, the full path to `start-mcp.ps1` |
 
-Для клиентов, использующих JSON-конфигурацию `mcpServers`, пример ниже.
-**Замените путь на свой**; обратные слеши в JSON записываются двойными:
+For clients that use a JSON `mcpServers` configuration, use the example below.
+**Replace the path with your own.** Backslashes must be doubled in JSON:
 
 ```json
 {
@@ -149,124 +151,146 @@ codex mcp get telegram
 }
 ```
 
-Не запускайте `start-mcp.ps1` вручную как отдельный сервис: его запускает MCP-клиент.
-Отсутствие веб-страницы и порта — нормально, данные передаются через stdio.
+Do not run `start-mcp.ps1` manually as a separate service: the MCP client launches it.
+There is no web page or listening port; communication happens over stdio.
 
-## Инструменты
+## Tools
 
-| Инструмент | Назначение |
+| Tool | Purpose |
 |---|---|
-| `whoami` | Проверить подключённый аккаунт |
-| `list_chat_folders` | Получить папки, их названия, ID, иконки и порядок |
-| `list_chats` | Чаты из основного списка, архива или выбранной папки |
-| `read_chat` | Последние сообщения выбранного чата |
-| `search_chats` | Найти чаты по названию; это не поиск по всей переписке |
-| `resolve_chat` | Найти публичный чат по `@username` |
-| `send_message` | Отправить текстовое сообщение от вашего имени |
+| `whoami` | Check the connected account |
+| `list_chat_folders` | List folders, their names, IDs, icons, and order |
+| `list_chats` | List chats from the main list, archive, or a selected folder |
+| `read_chat` | Read recent messages in a selected chat |
+| `search_chats` | Find chats by name; this does not search all message history |
+| `resolve_chat` | Find a public chat by `@username` |
+| `send_message` | Send a text message from your account |
 
-Папки — это вкладки вроде «Работа» или «Личные», а не групповые беседы.
-Сначала вызовите `list_chat_folders`, затем передайте полученный ID:
-`list_chats(folder_id=ID, limit=100, offset=0)`. Следующая страница — `offset=100`.
-`limit` — от 1 до 1000, `offset` — неотрицательный, сумма не больше 10000.
-Короткая страница означает конец списка. Пока приходят сообщения, порядок может меняться.
-Один чат может входить в несколько папок. Их фильтры и закрепления учитывает Telegram.
+Folders are sidebar tabs such as “Work” or “Personal”, not group conversations.
+Call `list_chat_folders` first, then use a returned ID:
+`list_chats(folder_id=ID, limit=100, offset=0)`. Use `offset=100` for the next page.
+`limit` must be between 1 and 1000, `offset` must be nonnegative, and their sum must
+not exceed 10000. A short page means the end of the list. The order may change as
+messages arrive. A chat can belong to multiple folders. Telegram handles folder
+filters and pinned chats.
 
-Без параметров `list_chats` возвращает основной список. `archived=True` выбирает
-архив; одновременно указывать архив и `folder_id` нельзя.
+Without selectors, `list_chats` returns the main list. `archived=True` selects the
+archive; it cannot be combined with `folder_id`.
 
-## Повседневная работа и обновление
+## Everyday use and updates
 
-После перезагрузки компьютера запустите Docker Desktop и ИИ-приложение.
-Для одной папки сессии используйте **один активный экземпляр MCP**. Одновременное
-подключение из нескольких приложений может заблокировать базу TDLib.
+After restarting your computer, start Docker Desktop and your AI application.
+Use **one active MCP instance per session directory**. Connecting several applications
+at the same time can cause a TDLib database lock.
 
-Для обновления закройте использующие этот MCP приложения, затем:
+To update, close applications using this MCP server, then run:
 
 ```powershell
 git pull --ff-only
 powershell -NoProfile -ExecutionPolicy Bypass -File .\setup.ps1
 ```
 
-Запустите ИИ-приложение снова. При обновлении из ZIP сохраните свои `.env` и
-`td_data`, заменяя только файлы программы. Для резервной копии сессии сначала
-остановите MCP и храните копию как пароль. Не добавляйте её в Git.
+Start your AI application again. If updating from a ZIP, preserve your `.env` and
+`td_data` and replace only the program files. Stop MCP before backing up the session,
+and protect the backup like a password. Do not add it to Git.
 
-## Если не работает
+## Troubleshooting
 
-| Что видно | Что сделать |
+| Symptom | What to do |
 |---|---|
-| Docker daemon / engine недоступен | Запустите Docker Desktop, дождитесь готовности Linux engine |
-| `TG_API_ID must be an integer` | В `.env` вместо заглушки должно быть число из my.telegram.org |
-| `API_ID_INVALID` или ошибка ключей | Перепроверьте обе строки в `.env`, без пробелов внутри значений |
-| QR истёк или вход занял больше 10 минут | Запустите `login-local.ps1` снова и сканируйте новый QR |
-| Запрос пароля после QR | Это пароль двухэтапной защиты Telegram, не код из SMS |
-| `Can't lock file ... td.binlog` | Закройте второй MCP-клиент/окно входа; не удаляйте базу |
-| Инструменты не появились | Проверьте полный путь к скрипту и перезапустите MCP-клиент |
-| Папки ещё не загрузились / timeout | Подождите подключения Telegram и повторите запрос |
-| `Unknown folder_id` | Повторно получите список папок; ID мог измениться |
-| Сообщения загрузились не полностью | Повторите запрос; чтение истории сейчас ограничено последними сообщениями |
-| Переехала папка проекта | Обновите абсолютный путь в настройке MCP |
+| Docker daemon / engine unavailable | Start Docker Desktop and wait for its Linux engine |
+| `TG_API_ID must be an integer` | Replace the placeholder in `.env` with the number from my.telegram.org |
+| `API_ID_INVALID` or credential error | Check both values in `.env`; remove any spaces within them |
+| QR expired or login took more than 10 minutes | Run `login-local.ps1` again and scan the new QR code |
+| Password requested after scanning QR | Enter your Telegram two-step verification password, not an SMS code |
+| `Can't lock file ... td.binlog` | Close the second MCP client or login window; do not delete the database |
+| Tools do not appear | Check the full script path and restart the MCP client |
+| Folders not loaded yet / timeout | Wait for Telegram to connect, then retry |
+| `Unknown folder_id` | Retrieve the folder list again; the ID may have changed |
+| Not all messages loaded | Retry; history reading currently covers recent messages only |
+| Project directory moved | Update the absolute path in your MCP configuration |
 
-Не публикуйте логи с личной перепиской или реквизитами. Подробнее: [SECURITY.md](SECURITY.md).
-Чтобы отключить доступ к аккаунту, завершите сессию **tg-mcp** в разделе
-**Telegram → Настройки → Устройства**. В Codex удалить регистрацию можно командой
-`codex mcp remove telegram`.
+Do not publish logs containing private conversations or credentials.
+See [SECURITY.en.md](SECURITY.en.md). To revoke account access, terminate the
+**tg-mcp** session in **Telegram → Settings → Devices**.
+To remove the server registration from Codex, run `codex mcp remove telegram`.
 
-## Linux и разработка
+## Linux and development
 
-Основная проверка запуска проведена на Windows x86-64 + Docker Desktop.
-Linux x86-64 может использовать тот же Docker-образ:
+The primary tested setup is Windows x86-64 + Docker Desktop.
+Linux x86-64 can use the same Docker image:
 
 ```bash
 cp .env.example .env
-# Заполните .env своими ключами до следующего шага.
+# Fill .env with your credentials before continuing.
 mkdir -p td_data
 docker build -f Dockerfile.local -t mcptg-local:0.1 .
 docker run --rm -it --env-file .env --mount "type=bind,source=$PWD/td_data,target=/data" mcptg-local:0.1 python scripts/login.py --qr
 ```
 
-Для MCP используйте ту же команду `docker run`, заменив `-it` на `-i` и убрав
-`python scripts/login.py --qr`. В настройках укажите абсолютные пути к `.env` и
-`td_data`. Для запуска без Docker нужны Python 3.10+ и совместимая TDLib:
+For MCP, use the same `docker run` command, replace `-it` with `-i`, and remove
+`python scripts/login.py --qr`. Use absolute paths to `.env` and `td_data` in your
+configuration. Running without Docker requires Python 3.10+ and a compatible TDLib:
 
 ```bash
 python3 -m venv .venv
 . .venv/bin/activate
 pip install -e . qrcode==8.2
-# TG_DATABASE_DIR из Docker-примера нужно заменить локальным путём.
+# Override the Docker example's TG_DATABASE_DIR with a local path.
 export TG_DATABASE_DIR="$PWD/td_data"
 export TDJSON_PATH="$PWD/lib/libtdjson.so"
 python scripts/login.py --qr
 python -m tg_mcp.server
 ```
 
-Готовая `lib/libtdjson.so` предназначена для Ubuntu 24.04 x86-64. Для другой системы
-потребуется собственная сборка. `scripts/build_tdlib.sh` собирает TDLib из официального
-репозитория; прочитайте скрипт и установите зависимости перед запуском. Версия готового
-бинарника — 1.8.68; точный исходный commit старой сборки неизвестен.
+The included `lib/libtdjson.so` targets Ubuntu 24.04 x86-64. Other platforms require
+a compatible build. `scripts/build_tdlib.sh` builds TDLib from its official repository;
+read the script and install its dependencies before running it. The included binary
+is version 1.8.68; its exact source commit was not recorded in the original build.
 
-Тесты без аккаунта и секретов:
+Run tests without an account or credentials:
 
 ```bash
 pip install -e .
 python -m unittest discover -s scripts -p "test_*.py"
 ```
 
-GitHub Actions запускает тесты и проверку загрузки TDLib. Живая проверка требует
-собственной сессии Telegram; CI её не использует.
+GitHub Actions runs the tests and checks that TDLib loads. Live testing requires
+your own Telegram session; CI does not use one.
 
-Структура: `src/tg_mcp/client.py` — соединение и авторизация; `api.py` — операции
-Telegram; `server.py` — инструменты MCP; `tdjson.py` — привязка к TDLib;
-`scripts/` — вход, сборка и тесты.
+Project layout: `src/tg_mcp/client.py` handles connections and authentication;
+`api.py` implements Telegram operations; `server.py` exposes MCP tools;
+`tdjson.py` binds to TDLib; `scripts/` contains login, build, and test helpers.
 
-## Ограничения
+## Limitations
 
-Нет загрузки вложений, поиска текста по всей истории, изменения папок или работы
-с секретными чатами. Медиа возвращаются краткими текстовыми обозначениями.
-`read_chat` не является полной выгрузкой архива переписки. Отправка сейчас текстовая.
-Сервер предоставляет локальный stdio, а не HTTP endpoint.
+Attachment downloads, full-history text search, folder editing, and secret chats
+are not supported. Media are returned as short text descriptions. `read_chat` is
+not a complete conversation archive export. Sending currently supports text only.
+The server provides local stdio, not an HTTP endpoint.
 
-## Автор и лицензии
+## Roadmap and feedback
 
-Автор проекта — **pborisovb**. Код TelegramMCP распространяется по [MIT](LICENSE).
-Сторонние зависимости сохраняют свои лицензии: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+See the [roadmap](ROADMAP.md) for priorities and current boundaries. Report an
+[installation problem, bug, or feature request](https://github.com/pborisovb-commits/TelegramMCP/issues/new/choose).
+Do not include Telegram credentials, session files, or private messages in issues.
+
+### Known lifecycle limitation
+
+Each launcher invocation starts a new container. Multiple MCP client connections
+can leave multiple server processes running, all pointing to the same session directory.
+Use only one active connection per session. Stop the associated containers when
+finished; disabling a client integration may not terminate existing processes.
+Do not delete session files to resolve a database lock. Lifecycle management is a
+priority in the roadmap.
+
+Summaries are produced by your AI client using retrieved messages. Scheduled
+summaries and CRM task creation are not built into this release. Local hosting of
+the server does not mean messages stay on your machine: the AI client may send
+retrieved content to its model provider.
+
+## Author and licenses
+
+The project author is **pborisovb**. TelegramMCP is distributed under the
+[MIT License](LICENSE). Third-party dependencies retain their own licenses:
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) (in Russian).

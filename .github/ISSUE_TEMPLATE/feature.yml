@@ -1,0 +1,28 @@
+name: "Feature request / Предложение"
+description: "Describe a practical use case and the desired improvement."
+title: "[feature] "
+body:
+  - type: markdown
+    attributes:
+      value: "Do not post API credentials, passwords, session files, private messages or full unredacted logs. Не публикуйте ключи, пароли, файлы сессии и личную переписку. Report vulnerabilities privately as described in SECURITY.md."
+  - type: textarea
+    id: problem
+    attributes:
+      label: "Problem / Задача"
+      description: "What are you trying to accomplish?"
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: "Suggested behavior / Предложение"
+      description: "What should the server do?"
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "Alternatives / Альтернативы"
+      description: "What workaround do you use today?"
+    validations:
+      required: false
