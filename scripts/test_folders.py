@@ -3,18 +3,19 @@ from unittest.mock import Mock
 from tg_mcp import api
 from tg_mcp.client import TelegramClient, TdlibError
 
+# All folder names, IDs and chat responses below are synthetic test fixtures.
 class FoldersTest(unittest.TestCase):
     def test_updates_empty_and_replacement(self):
         c=TelegramClient(1,'test',tdjson=Mock())
         with self.assertRaises(TimeoutError): c.get_chat_folders(0)
         c._handle_update({'@type':'updateChatFolders','chat_folders':[]})
         self.assertEqual(api.list_chat_folders(c)['folders'],[])
-        c._handle_update({'@type':'updateChatFolders','chat_folders':[{'id':7,'name':{'text':{'text':'Monkey'}}}]})
-        self.assertEqual(api.list_chat_folders(c)['folders'][0]['title'],'Monkey')
+        c._handle_update({'@type':'updateChatFolders','chat_folders':[{'id':7,'name':{'text':{'text':'Example folder'}}}]})
+        self.assertEqual(api.list_chat_folders(c)['folders'][0]['title'],'Example folder')
         snapshot=c.get_chat_folders(); snapshot['chat_folders'].clear()
         self.assertEqual(len(c.get_chat_folders()['chat_folders']),1)
     def test_partial_loading_and_paging(self):
-        c=Mock(); c.get_chat_folders.return_value={'chat_folders':[{'id':7,'title':'Monkey'}]}
+        c=Mock(); c.get_chat_folders.return_value={'chat_folders':[{'id':7,'title':'Example folder'}]}
         loaded=[]
         def invoke(q):
             if q['@type']=='getChat': return {'id':q['chat_id'],'title':'chat'}

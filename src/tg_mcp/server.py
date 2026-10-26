@@ -48,7 +48,7 @@ def whoami() -> dict[str, Any]:
 
 @mcp.tool()
 def list_chat_folders() -> dict[str, Any]:
-    """List Telegram sidebar folders (e.g. Monkey, bots), their IDs and order.
+    """List Telegram sidebar folders (e.g. Work, Personal), their IDs and order.
 
     These are user-created chat folders, not group conversations.
     Use a returned id as folder_id in list_chats to get its actual members.
